@@ -1,11 +1,9 @@
 import pygame
-
 from tools import load_image
 
 
 class Pipe(pygame.sprite.Sprite):
     V = -1
-
     def __init__(self, size, turning=False, *group):
         super().__init__(*group)
         Pipe.image = load_image("Images/Pipe.png", -1)

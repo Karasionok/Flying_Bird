@@ -1,11 +1,13 @@
 import pygame
 import random
+import sqlite3
 
 from Background import Background
 from Bird import Bird
 from Borders import Border
 from Pipe import Pipe
-from tools import load_image
+from main_menu import main_menu
+from game_over import game_over
 
 pygame.init()
 size = WIDTH, HEIGHT = 1200, 1000
@@ -17,6 +19,7 @@ birds = pygame.sprite.Group()
 pipes = pygame.sprite.Group()
 borders = pygame.sprite.Group()
 backgrounds = pygame.sprite.Group()
+ending = pygame.sprite.Group()
 # timers
 clock = pygame.time.Clock()
 MOVEMENT = pygame.USEREVENT + 1
@@ -26,26 +29,40 @@ pygame.time.set_timer(NEW_PIPE, 5000)
 FALLING = pygame.USEREVENT + 1
 pygame.time.set_timer(FALLING, 10)
 # flags
-main_menu = True
+main_screen = True
 running = True
-game_over = True
+over_flag = True
 next_level = True
 
-
-def main_menu():
-    pass
+FONT = pygame.font.Font(None, 32)
+level = 1
 
 
 def gaming():
-    global next_level
+    global next_level, username
     global running
     global counter
-    bird = Bird(pipes, birds)
+    global main_screen
+    global over_flag
+    global level
+    bird = Bird(pipes, borders, birds)
     background = Background(size, backgrounds)
     Border(0, 0, size[0], 0, borders)
     Border(0, size[1], size[0], size[1], borders)
 
     while running:
+        if main_screen:
+            result, username = main_menu(screen, clock, WIDTH, FONT)
+            if result:
+                break
+            else:
+                main_screen = False
+                bird.kill()
+                for s in pipes:
+                    s.kill()
+                bird = Bird(pipes, borders, birds)
+                level = 1
+                counter = 0
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -57,7 +74,14 @@ def gaming():
                 Pipe(1 / n, True, pipes)
             if event.type == FALLING:
                 if bird.update() is False:
-                    print(1)
+                    over_flag = True
+                    if over_flag:
+                        result_end = game_over(screen, size, WIDTH, ending)
+                        if result_end:
+                            print(username)
+                            print(level, counter)
+                            over_flag = False
+                            main_screen = True
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     bird.jump()
@@ -65,8 +89,16 @@ def gaming():
             if sprite.get_x() < -400:
                 sprite.kill()
                 counter += 0.5
-                if counter == 25:
+                if counter == 2:
                     next_level = True  # TODO summon func
+                    Pipe.V -= 1
+                    bird.kill()
+                    for s in pipes:
+                        s.kill()
+                    bird = Bird(pipes, borders, birds)
+
+                    level += 1
+                    counter = 0
         font = pygame.font.Font(None, 100)
         string_rendered = font.render(str(int(counter)), 1, pygame.Color('black'))
         counter_rect = string_rendered.get_rect()
