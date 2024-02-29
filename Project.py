@@ -37,14 +37,19 @@ next_level = True
 FONT = pygame.font.Font(None, 32)
 level = 1
 
+con = sqlite3.connect('DB/database.sqlite3')
+cur = con.cursor()
+
 
 def gaming():
-    global next_level, username
+    global next_level
+    global username
     global running
     global counter
     global main_screen
     global over_flag
     global level
+    global cur
     bird = Bird(pipes, borders, birds)
     background = Background(size, backgrounds)
     Border(0, 0, size[0], 0, borders)
@@ -52,7 +57,7 @@ def gaming():
 
     while running:
         if main_screen:
-            result, username = main_menu(screen, clock, WIDTH, FONT)
+            result, username = main_menu(screen, clock, WIDTH, FONT, cur)
             if result:
                 break
             else:
@@ -76,10 +81,11 @@ def gaming():
                 if bird.update() is False:
                     over_flag = True
                     if over_flag:
-                        result_end = game_over(screen, size, WIDTH, ending)
+                        result_end = game_over(screen, size, WIDTH, ending, (level, counter))
                         if result_end:
-                            print(username)
-                            print(level, counter)
+                            cur.execute(f'''INSERT INTO results(username, level, last_score)
+                             VALUES("{username}", {level}, {counter});''')
+                            con.commit()
                             over_flag = False
                             main_screen = True
             if event.type == pygame.KEYDOWN:
@@ -90,7 +96,7 @@ def gaming():
                 sprite.kill()
                 counter += 0.5
                 if counter == 2:
-                    next_level = True  # TODO summon func
+                    next_level = True
                     Pipe.V -= 1
                     bird.kill()
                     for s in pipes:
@@ -112,6 +118,7 @@ def gaming():
         clock.tick(500)
 
     screen.fill(pygame.Color("black"))
+    con.close()
     pygame.quit()
 
 

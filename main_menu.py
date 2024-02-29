@@ -1,4 +1,5 @@
 import pygame
+from summon_results import summon_results
 
 COLOR_INACTIVE = pygame.Color('lightskyblue3')
 COLOR_ACTIVE = pygame.Color('dodgerblue2')
@@ -48,7 +49,7 @@ class InputBox:
         pygame.draw.rect(screen, self.color, self.rect, 2)
 
 
-def main_menu(screen, clock, width, font_txt):
+def main_menu(screen, clock, width, font_txt, cur):
     input_box = InputBox(100, 100, 140, 32, font_txt)
     while True:
         for event in pygame.event.get():
@@ -56,9 +57,10 @@ def main_menu(screen, clock, width, font_txt):
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     return False, input_box.text
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
+                elif event.key == pygame.K_ESCAPE:
                     return True, None
+                elif event.key == pygame.K_BACKSPACE:
+                    summon_results(screen, cur)
         screen.fill('black')
         font = pygame.font.Font(None, 75)
         string_rendered = font.render('Press "Space" to play', 1, pygame.Color('white'))
