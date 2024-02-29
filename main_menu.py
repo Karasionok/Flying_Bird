@@ -74,6 +74,12 @@ def main_menu(screen, clock, width, font_txt, cur):
         quit_rect.topleft = (0, 0)
         screen.blit(quit_rendered, quit_rect)
 
+        font = pygame.font.Font(None, 50)
+        string_rendered = font.render('Press "Backspace" to see top list', 1, pygame.Color('white'))
+        text_rect = string_rendered.get_rect()
+        text_rect.topleft = (550, 100)
+        screen.blit(string_rendered, text_rect)
+
         input_box.update()
         input_box.draw(screen)
         pygame.display.flip()

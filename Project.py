@@ -95,7 +95,7 @@ def gaming():
             if sprite.get_x() < -400:
                 sprite.kill()
                 counter += 0.5
-                if counter == 2:
+                if counter == 25:
                     next_level = True
                     Pipe.V -= 1
                     bird.kill()
