@@ -12,7 +12,7 @@ from game_over import game_over
 pygame.init()
 size = WIDTH, HEIGHT = 1200, 1000
 screen = pygame.display.set_mode(size)
-pygame.display.set_caption('Flappy Bird')
+pygame.display.set_caption('Flying Bird')
 counter = 0
 # groups of sprites
 birds = pygame.sprite.Group()
