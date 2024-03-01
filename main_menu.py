@@ -50,7 +50,7 @@ class InputBox:
 
 
 def main_menu(screen, clock, width, font_txt, cur):
-    input_box = InputBox(100, 100, 140, 32, font_txt)
+    input_box = InputBox(400, 500, 140, 32, font_txt)
     while True:
         for event in pygame.event.get():
             input_box.handle_event(event)
@@ -79,6 +79,12 @@ def main_menu(screen, clock, width, font_txt, cur):
         text_rect = string_rendered.get_rect()
         text_rect.topleft = (550, 100)
         screen.blit(string_rendered, text_rect)
+
+        font = pygame.font.Font(None, 50)
+        quit_rendered = font.render('Enter your name', 1, pygame.Color('white'))
+        quit_rect = quit_rendered.get_rect()
+        quit_rect.topleft = (400, 400)
+        screen.blit(quit_rendered, quit_rect)
 
         input_box.update()
         input_box.draw(screen)
